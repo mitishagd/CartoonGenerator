@@ -4,5 +4,17 @@
   "description": "",
   "author": "Mitisha Ganesha Dodderi",
   "license": "MIT",
-  "type": "module"
+  "scripts": {
+    "build": "tsc",
+    "test:local": "node test-local.js"
+  },
+  "dependencies": {
+    "openai": "^6.15.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.159",
+    "@types/node": "^25.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
 }

@@ -7,9 +7,14 @@ const openai = new OpenAI({
 })
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    console.log('Lambda function invoked');
+    console.log('Event:', JSON.stringify(event, null, 2));
 
     const body = JSON.parse(event.body || '{}');
     const { subject } = body;
+    console.log('Parsed body:', body);
+    console.log('Subject:', subject);
+
     // Enable CORS
     const headers = {
         'Access-Control-Allow-Origin': '*',
@@ -17,17 +22,9 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
     }
 
-    if (!subject) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'Subject is required' }),
-      }
-    }
-
-
     // Handle preflight requests
     if (event.httpMethod === 'OPTIONS') {
+        console.log('Handling OPTIONS preflight request');
         return {
             statusCode: 200,
             headers,
@@ -35,7 +32,17 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         }
     }
 
+    if (!subject) {
+      console.log('No subject provided, returning 400');
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'Subject is required' }),
+      }
+    }
+
     try {
+        console.log('Calling OpenAI API with prompt:', `A cartoon style illustration of ${subject}`);
         const response = await openai.images.generate({
             model: 'dall-e-3',
             prompt: `A cartoon style illustration of ${subject}`,
@@ -43,9 +50,12 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             size: '1024x1024',
         });
 
+        console.log('OpenAI response received');
         const imageUrl = response.data?.[0]?.url;
+        console.log('Image URL:', imageUrl);
 
         if (!imageUrl) {
+            console.log('No image URL in response');
             return {
                 statusCode: 500,
                 headers,
@@ -53,6 +63,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             };
         }
 
+        console.log('Returning success response');
         return {
             statusCode: 200,
             headers,
@@ -60,11 +71,12 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         };
 
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error generating image:', error);
+        console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 error: 'Failed to generate image',
                 details: error instanceof Error ? error.message : 'Unknown error'
             }),

@@ -64,6 +64,12 @@ const App = () => {
           {loading ? 'Generating...' : 'Generate Cartoon'}
         </Styled.Button>
       </Styled.Form>
+      {imageUrl && (
+        <div>
+          <h2>Generated Cartoon:</h2>
+          <img src={imageUrl} alt="Generated Cartoon" width="300" />
+        </div>
+      )}
     </Styled.Root>
   )
 }

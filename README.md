@@ -7,6 +7,12 @@
 - AI: OpenAI DALL-E API
 
 ## Setup
-- See `/backend/README.md` and `/frontend/README.md` 
+- See `/backend/README.md` and `/frontend/README.md`
 
-## Output
+## Screenshots
+
+### Initial View
+![Cartoon Generator](./screenshots/Cartoon%20Generator.png)
+
+### Generated Result
+![Generated Cartoon](./screenshots/Generated%20Cartoon.png)

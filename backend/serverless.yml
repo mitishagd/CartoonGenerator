@@ -6,17 +6,26 @@ provider:
   region: us-east-1
   environment:
     OPENAI_API_KEY: ${env:OPENAI_API_KEY}
+  httpApi:
+    cors:
+      allowedOrigins:
+        - '*'
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowCredentials: false
 
 functions:
   generate:
     handler: dist/index.handler
-    timeout: 45
+    timeout: 60
     events:
-      - http:
-          path: generate
-          method: post
-          cors: true
-      - http:
-          path: generate
-          method: options
-          cors: true
+      - httpApi:
+          path: /generate
+          method: POST
